@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ titulo }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .actions a { margin-right: 10px; }
+        .btn { padding: 5px 10px; text-decoration: none; color: white; border-radius: 4px; }
+        .btn-editar { background-color: #2196F3; }
+        .btn-excluir { background-color: #f44336; }
+        .btn-novo { background-color: #4CAF50; }
+        .flash-messages { margin-bottom: 15px; padding: 10px; border-radius: 4px; }
+        .flash-success { background-color: #dff0d8; color: #3c763d; }
+        .flash-error { background-color: #f2dede; color: #a94442; }
+        .header { display: flex; justify-content: space-between; align-items: center; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ titulo }}</h1>
+        <a href="{{url_for('novo') }}" class="btn btn-novo">Novo Usuário</a>
+        <a href="{{url_for('logout') }} " class="btn btn-novo">Sair</a>
+    </div>
+
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash-success">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    {% if usuarios %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                    <tr>
+                        <td>{{ usuario[0] }}</td>
+                        <td>{{ usuario[1] }}</td>
+                        <td>{{ usuario[2] }}</td>
+                        <td class="actions">
+                            <a href="{{ url_for('editar', id=usuario[0]) }}" class="btn btn-editar">Editar</a>
+                            <form action="{{ url_for('excluir', id=usuario[0]) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-excluir" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Nenhum usuário cadastrado.</p>
+    {% endif %}
+</body>
+</html>
