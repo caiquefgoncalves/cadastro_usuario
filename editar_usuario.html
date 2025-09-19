@@ -5,14 +5,39 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
         input[type="text"], input[type="email"], input[type="password"] {
-            padding: 8px; width: 300px; border: 1px solid #ccc; border-radius: 4px;
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
-        button { padding: 10px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        .flash-messages { margin-bottom: 15px; padding: 10px; border-radius: 4px; }
-        .flash-error { background-color: #f2dede; color: #a94442; }
-        .password-note { color: #666; font-size: 0.9em; }
+        button {
+            padding: 12px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .btn-cancelar {
+            padding: 12px 20px;
+            background-color: #f44336;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .flash-messages { margin-bottom: 15px; }
+        .flash-error {
+            background-color: #f2dede;
+            color: #a94442;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ebccd1;
+        }
+        .password-note { color: #666; font-size: 0.9em; margin-top: 5px; }
+        .actions { margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -50,8 +75,10 @@
             <input type="password" name="confirmar_senha">
         </div>
 
-        <button type="submit">Salvar Alterações</button>
-        <a href="{{ url_for('index') }}" style="margin-left: 10px;">Cancelar</a>
+        <div class="actions">
+            <button type="submit">Salvar Alterações</button>
+            <a href="{{ url_for('index') }}" class="btn-cancelar">Cancelar</a>
+        </div>
     </form>
 </body>
 </html>

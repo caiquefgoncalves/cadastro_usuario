@@ -13,16 +13,19 @@
         .btn-excluir { background-color: #f44336; }
         .btn-novo { background-color: #4CAF50; }
         .flash-messages { margin-bottom: 15px; padding: 10px; border-radius: 4px; }
-        .flash-success { background-color: #dff0d8; color: #3c763d; }
-        .flash-error { background-color: #f2dede; color: #a94442; }
-        .header { display: flex; justify-content: space-between; align-items: center; }
+        .flash-success { background-color: #dff0d8; color: #3c763d; border: 1px solid #d6e9c6; }
+        .flash-error { background-color: #f2dede; color: #a94442; border: 1px solid #ebccd1; }
+        .flash-info { background-color: #d9edf7; color: #31708f; border: 1px solid #bce8f1; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>{{ titulo }}</h1>
-        <a href="{{url_for('novo') }}" class="btn btn-novo">Novo Usuário</a>
-        <a href="{{url_for('logout') }} " class="btn btn-novo">Sair</a>
+        <div>
+            <a href="{{ url_for('novo') }}" class="btn btn-novo">Novo Usuário</a>
+            <a href="{{ url_for('logout') }}" class="btn" style="background-color: #ff9800; margin-left: 10px;">Sair</a>
+        </div>
     </div>
 
     <div class="flash-messages">
