@@ -8,16 +8,16 @@ app.config['SECRET_KEY'] = 'sua_chave_secreta'
 bcrypt = Bcrypt(app)
 
 host = 'localhost'
-database = r'C:\Users\Aluno\Pictures\BANCO.FDB'
+database = r'C:\Users\Aluno\Desktop\PyCharm Ariane\PyCharm Ariane\biblioteca_com_banco\BANCO.FDB'
 user = 'sysdba'
 password = 'sysdba'
 
 con = fdb.connect(host=host, database=database, user=user, password=password)
 
-
 @app.route('/')
 def index():
     if 'usuario_id' not in session:
+        flash('Você precisa fazer login para acessar a página inicial!')
         return redirect(url_for('login'))
 
     cursor = con.cursor()
@@ -28,7 +28,6 @@ def index():
     finally:
         cursor.close()
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -37,7 +36,6 @@ def login():
 
         cursor = con.cursor()
         try:
-
             cursor.execute('SELECT id_usuario, nome, senha FROM usuarios WHERE email = ?', (email,))
             usuario = cursor.fetchone()
 
@@ -54,7 +52,6 @@ def login():
         finally:
             cursor.close()
     return render_template('login.html', titulo='Login')
-
 
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
@@ -87,31 +84,29 @@ def cadastro():
 
     return render_template('cadastro.html', titulo='Cadastro')
 
-
 @app.route('/logout')
 def logout():
     session.clear()
-    flash('Você foi desconectado')
+    flash('Você foi desconectado com sucesso!')
     return redirect(url_for('login'))
-
 
 @app.route('/novo')
 def novo():
     if 'usuario_id' not in session:
+        flash('Você precisa fazer login para cadastrar um novo usuário!')
         return redirect(url_for('login'))
     return render_template('novo_usuario.html', titulo='Novo Usuario')
-
 
 @app.route('/criar', methods=['POST'])
 def criar():
     if 'usuario_id' not in session:
+        flash('Você precisa estar logado para realizar esta ação!')
         return redirect(url_for('login'))
 
     nome = request.form['nome']
     email = request.form['email']
     senha = request.form['senha']
     confirmar_senha = request.form['confirmar_senha']
-
 
     if not nome or not email or not senha:
         flash('Todos os campos são obrigatórios!')
@@ -142,10 +137,10 @@ def criar():
     finally:
         cursor.close()
 
-
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
 def editar(id):
     if 'usuario_id' not in session:
+        flash('Você precisa fazer login para editar usuários!')
         return redirect(url_for('login'))
 
     cursor = con.cursor()
@@ -176,7 +171,6 @@ def editar(id):
                     flash('A senha deve ter no mínimo 8 caracteres')
                     return render_template('editar_usuario.html', usuario=usuario, titulo='Editar Usuario')
 
-
                 senha_cripto = bcrypt.generate_password_hash(senha).decode('utf-8')
 
             cursor.execute('SELECT 1 FROM usuarios WHERE email = ? AND id_usuario != ?', (email, id))
@@ -185,7 +179,6 @@ def editar(id):
                 return render_template('editar_usuario.html', usuario=usuario, titulo='Editar Usuario')
 
             if senha:
-
                 cursor.execute('UPDATE usuarios SET nome = ?, email = ?, senha = ? WHERE id_usuario = ?',
                                (nome, email, senha_cripto, id))
             else:
@@ -199,27 +192,28 @@ def editar(id):
     finally:
         cursor.close()
 
-
-@app.route('/excluir/<int:id>', methods=['POST'])
+@app.route('/excluir/<int:id>', methods=['GET', 'POST'])
 def excluir(id):
-    if 'usuario_id' not in session:
-        return redirect(url_for('login'))
+    if request.method == 'POST':
+        if 'usuario_id' not in session:
+            flash('Você precisa fazer login para excluir usuários!')
+            return redirect(url_for('login'))
 
-    cursor = con.cursor()
-    try:
-        cursor.execute('SELECT 1 FROM usuarios WHERE id_usuario = ?', (id,))
-        if not cursor.fetchone():
-            flash('Usuario não encontrado!')
+        cursor = con.cursor()
+        try:
+            cursor.execute('SELECT 1 FROM usuarios WHERE id_usuario = ?', (id,))
+            if not cursor.fetchone():
+                flash('Usuario não encontrado!')
+                return redirect(url_for('index'))
+
+            cursor.execute('DELETE FROM usuarios WHERE id_usuario = ?', (id,))
+            con.commit()
+
+            flash('Usuario excluido com sucesso!')
             return redirect(url_for('index'))
-
-        cursor.execute('DELETE FROM usuarios WHERE id_usuario = ?', (id,))
-        con.commit()
-
-        flash('Usuario excluido com sucesso!')
-        return redirect(url_for('index'))
-    finally:
-        cursor.close()
-
+        finally:
+            cursor.close()
+    return render_template('login.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
